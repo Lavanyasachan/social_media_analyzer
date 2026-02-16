@@ -146,6 +146,8 @@ def test_confusion_matrix_plotting():
         from fabric_defect_detection import FabricDefectDetector
         import numpy as np
         import matplotlib
+        import tempfile
+        import os
         matplotlib.use('Agg')  # Use non-interactive backend
         
         detector = FabricDefectDetector(img_size=(224, 224), batch_size=32)
@@ -154,11 +156,15 @@ def test_confusion_matrix_plotting():
         # Create dummy confusion matrix
         cm = np.array([[50, 5, 3], [7, 45, 2], [4, 3, 60]])
         
+        # Use cross-platform temporary directory
+        temp_dir = tempfile.gettempdir()
+        save_path = os.path.join(temp_dir, 'test_confusion_matrix.png')
+        
         # Plot (but don't show)
-        detector.plot_confusion_matrix(cm, save_path='/tmp/test_confusion_matrix.png')
+        detector.plot_confusion_matrix(cm, save_path=save_path)
         
         print(f"  ✓ Confusion matrix plotting successful")
-        print(f"    - Saved to: /tmp/test_confusion_matrix.png")
+        print(f"    - Saved to: {save_path}")
         
         return True
     except Exception as e:

@@ -1,6 +1,40 @@
 """
 Fabric Defect Detection using ResNet CNN Model
-This script implements a ResNet-based deep learning model for detecting fabric defects
+
+This module implements a ResNet50-based deep learning model for detecting fabric defects
+using transfer learning. It provides a complete pipeline for downloading data, training,
+and evaluating a CNN classifier.
+
+Main Class:
+    FabricDefectDetector: Complete fabric defect detection system
+
+Key Features:
+    - ResNet50 transfer learning architecture
+    - Automatic Kaggle dataset download
+    - Data augmentation pipeline
+    - Model training with callbacks
+    - Comprehensive evaluation (accuracy, confusion matrix)
+    - Visualization of results
+
+Basic Usage:
+    >>> from fabric_defect_detection import FabricDefectDetector
+    >>> detector = FabricDefectDetector(img_size=(224, 224), batch_size=32)
+    >>> dataset_path = detector.download_dataset()
+    >>> train_gen, val_gen = detector.prepare_data_generators(dataset_path)
+    >>> detector.build_resnet_model(num_classes=len(detector.class_names))
+    >>> detector.train_model(train_gen, val_gen, epochs=50)
+    >>> results = detector.evaluate_model(val_gen)
+    >>> detector.plot_confusion_matrix(results['confusion_matrix'])
+
+Command Line Usage:
+    $ python fabric_defect_detection.py
+
+Requirements:
+    - TensorFlow >= 2.10.0
+    - Keras >= 2.10.0
+    - NumPy, Pandas, Matplotlib, Seaborn
+    - scikit-learn
+    - kagglehub
 """
 
 import os

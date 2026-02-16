@@ -65,14 +65,9 @@ def validate_code_structure():
     # Check FabricDefectDetector class
     print("\n[4/4] Checking FabricDefectDetector class...")
     try:
-        # We need to be able to import it
-        import importlib.util
-        spec = importlib.util.spec_from_file_location("fabric_defect_detection", "fabric_defect_detection.py")
-        module = importlib.util.module_from_spec(spec)
-        
-        # Check class exists
-        import inspect
-        source = inspect.getsource(spec.loader.get_code('fabric_defect_detection'))
+        # Read the source file directly
+        with open('fabric_defect_detection.py', 'r') as f:
+            source = f.read()
         
         if 'class FabricDefectDetector' in source:
             print("  ✓ FabricDefectDetector class found")
