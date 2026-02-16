@@ -1,0 +1,161 @@
+```
+================================================================================
+              FABRIC DEFECT DETECTION SYSTEM ARCHITECTURE
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           DATA ACQUISITION                                  │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  kagglehub.dataset_download("nexuswho/fabric-defects-dataset")            │
+│                           ↓                                                 │
+│                  Fabric Images Dataset                                      │
+│           (Various defect types: holes, stains, etc.)                       │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        DATA PREPROCESSING                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ImageDataGenerator (Training Set):                                        │
+│    • Rescale to [0, 1]                                                     │
+│    • Rotation: ±20°                                                        │
+│    • Width/Height Shift: 20%                                               │
+│    • Shear: 20%                                                            │
+│    • Zoom: 20%                                                             │
+│    • Horizontal Flip                                                        │
+│                           ↓                                                 │
+│  Split: 80% Training / 20% Validation                                      │
+│  Batch Size: 32                                                            │
+│  Target Size: 224×224×3                                                    │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       RESNET50 CNN MODEL                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  Input Layer: 224×224×3 RGB Images                                         │
+│                           ↓                                                 │
+│  ┌─────────────────────────────────────────────────────────┐              │
+│  │  ResNet50 Base (Pre-trained on ImageNet)               │              │
+│  │  • 50 layers deep                                       │              │
+│  │  • Residual connections                                 │              │
+│  │  • Initially frozen for transfer learning               │              │
+│  └─────────────────────────────────────────────────────────┘              │
+│                           ↓                                                 │
+│  GlobalAveragePooling2D                                                    │
+│                           ↓                                                 │
+│  BatchNormalization                                                        │
+│                           ↓                                                 │
+│  Dense(512, activation='relu')                                             │
+│                           ↓                                                 │
+│  Dropout(0.5)                                                              │
+│                           ↓                                                 │
+│  Dense(256, activation='relu')                                             │
+│                           ↓                                                 │
+│  Dropout(0.3)                                                              │
+│                           ↓                                                 │
+│  Dense(num_classes, activation='softmax')                                  │
+│                           ↓                                                 │
+│  Output: Class Probabilities                                               │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          TRAINING PROCESS                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  Optimizer: Adam (lr=0.001)                                                │
+│  Loss: Categorical Cross-Entropy                                           │
+│  Metrics: Accuracy, Precision, Recall                                      │
+│                                                                             │
+│  Callbacks:                                                                │
+│    • ModelCheckpoint → saves best model                                    │
+│    • EarlyStopping → stops if no improvement (patience=10)                 │
+│    • ReduceLROnPlateau → reduces learning rate (patience=5)                │
+│                                                                             │
+│  Epochs: Up to 50 (with early stopping)                                    │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      EVALUATION & METRICS                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  1. Overall Accuracy Score                                                 │
+│     └─> Percentage of correctly classified images                          │
+│                                                                             │
+│  2. Confusion Matrix                                                       │
+│     └─> Heatmap showing true vs predicted labels                           │
+│         (visualized with seaborn)                                           │
+│                                                                             │
+│  3. Classification Report                                                  │
+│     └─> Per-class precision, recall, F1-score                              │
+│                                                                             │
+│  4. Per-Class Accuracy                                                     │
+│     └─> Bar chart showing accuracy for each defect type                    │
+│                                                                             │
+│  5. Training History                                                       │
+│     └─> Plots of accuracy, loss, precision, recall over epochs             │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           OUTPUT FILES                                      │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  Models:                                                                   │
+│    • fabric_defect_resnet_model.h5 (final model)                           │
+│    • best_fabric_defect_model.h5 (best checkpoint)                         │
+│                                                                             │
+│  Visualizations:                                                           │
+│    • training_history.png (4 subplots)                                     │
+│    • confusion_matrix.png (heatmap)                                        │
+│    • per_class_accuracy.png (bar chart)                                    │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+================================================================================
+                          USAGE WORKFLOW
+================================================================================
+
+┌──────────────────────┐
+│   User Chooses       │
+│   Usage Method       │
+└──────┬───────────────┘
+       │
+       ├─────────────────┐─────────────────┐─────────────────┐
+       │                 │                 │                 │
+       ↓                 ↓                 ↓                 ↓
+┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+│ Python Script│  │   Jupyter    │  │ Quick Start  │  │  Custom API  │
+│              │  │   Notebook   │  │   Script     │  │   Usage      │
+└──────┬───────┘  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘
+       │                 │                 │                 │
+       └─────────────────┴─────────────────┴─────────────────┘
+                                   │
+                                   ↓
+                    ┌──────────────────────────┐
+                    │ FabricDefectDetector     │
+                    │ Class Methods:           │
+                    │  • download_dataset()    │
+                    │  • prepare_data()        │
+                    │  • build_model()         │
+                    │  • train_model()         │
+                    │  • evaluate_model()      │
+                    │  • visualize_results()   │
+                    └──────────────────────────┘
+                                   │
+                                   ↓
+                    ┌──────────────────────────┐
+                    │   Results & Outputs      │
+                    │   • Trained Model        │
+                    │   • Accuracy Report      │
+                    │   • Visualizations       │
+                    └──────────────────────────┘
+
+================================================================================
+```

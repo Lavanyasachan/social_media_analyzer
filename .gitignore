@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Model files (large files)
+*.h5
+*.hdf5
+fabric_defect_resnet_model/
+best_fabric_defect_model/
+
+# Dataset (downloaded from Kaggle)
+*.zip
+dataset/
+data/
+
+# Output files
+training_history.png
+confusion_matrix.png
+per_class_accuracy.png
+*.png
+*.jpg
+*.jpeg
+
+# Logs
+*.log
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
