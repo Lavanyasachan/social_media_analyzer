@@ -11,6 +11,7 @@ A deep learning-based fabric defect detection system using ResNet50 CNN architec
 
 ### Quick Start - Fabric Defect Detection
 
+#### Local Machine
 ```bash
 # Install dependencies
 pip install -r requirements.txt
@@ -20,6 +21,13 @@ python fabric_defect_detection.py          # Full pipeline
 python quick_start.py                      # Quick start with defaults
 jupyter notebook fabric_defect_detection.ipynb  # Interactive notebook
 ```
+
+#### Kaggle (Recommended for GPU)
+```bash
+# Use the Kaggle-optimized script
+python fabric_defect_kaggle.py             # Standalone script for Kaggle
+```
+See [KAGGLE_INSTRUCTIONS.md](KAGGLE_INSTRUCTIONS.md) for detailed Kaggle setup guide.
 
 ### Features
 - ✅ ResNet50 transfer learning architecture
@@ -34,11 +42,13 @@ jupyter notebook fabric_defect_detection.ipynb  # Interactive notebook
 - **Implementation Details**: See [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)
 
 ### Files
-- `fabric_defect_detection.py` - Main implementation
+- `fabric_defect_detection.py` - Main implementation (for local use)
+- `fabric_defect_kaggle.py` - **Kaggle-optimized standalone script** ⭐
 - `fabric_defect_detection.ipynb` - Interactive notebook
 - `quick_start.py` - Quick training script
 - `requirements.txt` - Dependencies
 - `validate_implementation.py` - Validation script (✓ All checks passed)
+- **[KAGGLE_INSTRUCTIONS.md](KAGGLE_INSTRUCTIONS.md)** - Complete Kaggle setup guide
 
 ### Dataset
 Uses the [Fabric Defects Dataset](https://www.kaggle.com/datasets/nexuswho/fabric-defects-dataset) from Kaggle.
